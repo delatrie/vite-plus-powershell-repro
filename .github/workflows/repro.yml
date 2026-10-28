@@ -1,0 +1,50 @@
+name: PowerShell startup under Vite Plus task caching
+
+on: [push, pull_request, workflow_dispatch]
+
+permissions:
+  contents: read
+
+jobs:
+  repro:
+    name: ${{ matrix.mode }}
+    runs-on: windows-latest
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        mode: [direct, cached-node, cached-vitest, uncached-vitest]
+    defaults:
+      run:
+        shell: cmd
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24.14.1
+          package-manager-cache: false
+      - name: Enable pinned Yarn
+        run: |
+          corepack enable
+          corepack prepare yarn@4.18.1 --activate
+      - name: Install dependencies
+        run: yarn install --immutable
+      - name: Direct Node to PowerShell
+        if: matrix.mode == 'direct'
+        run: yarn repro:direct
+      - name: Cached task to Node to PowerShell
+        if: matrix.mode == 'cached-node'
+        run: yarn repro:node
+      - name: Cached task to Vitest to PowerShell
+        if: matrix.mode == 'cached-vitest'
+        run: yarn repro
+      - name: Uncached task to Vitest to PowerShell
+        if: matrix.mode == 'uncached-vitest'
+        run: yarn repro:no-cache
+      - name: Upload diagnostics
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: diagnostics-${{ matrix.mode }}
+          path: packages/probe/out/
+          if-no-files-found: warn

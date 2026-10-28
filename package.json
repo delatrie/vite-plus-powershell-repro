@@ -1,0 +1,35 @@
+{
+  "name": "vite-plus-powershell-repro",
+  "private": true,
+  "type": "module",
+  "packageManager": "yarn@4.18.1",
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "repro": "yarn workspace @repro/probe exec vp run -v vp:test",
+    "repro:no-cache": "yarn workspace @repro/probe exec vp run -v --no-cache vp:test",
+    "repro:node": "yarn workspace @repro/probe exec vp run -v probe",
+    "repro:direct": "yarn workspace @repro/probe exec node probe.mjs"
+  },
+  "devDependencies": {
+    "vite": "npm:@voidzero-dev/vite-plus-core@1.2.0",
+    "vite-plus": "1.2.0",
+    "vitest": "5.0.4"
+  },
+  "resolutions": {
+    "brace-expansion": "5.0.12",
+    "http-cache-semantics": "4.3.0",
+    "ip-address@npm:^9.0.5": "10.7.4",
+    "semver": "^7.5.2",
+    "source-map-js": "1.2.2",
+    "tar": "7.5.22",
+    "tinypool": "2.1.2",
+    "vite": "npm:@voidzero-dev/vite-plus-core@1.2.0",
+    "vitest": "5.0.4",
+    "ws": "8.21.0"
+  }
+}
